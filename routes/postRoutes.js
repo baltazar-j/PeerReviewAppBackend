@@ -8,9 +8,13 @@ const {
 
 // Temporary route to bypass authentication for testing
 router.post('/create', (req, res) => {
-  // Hardcode the authorId for now (use the test user's _id from MongoDB)
-  req.user = { id: new mongoose.Types.ObjectId('6746e4aa69aeaabd4707de03') }; // Use the test user's _id directly here
+  console.log(req);
+  req.user = { id: new mongoose.Types.ObjectId('6746e4aa69aeaabd4707de03') };
   createPost(req, res);
+});
+
+router.post('/', (req, res) => {
+  console.log(req.body);
 });
 
 //Get all posts in descending order

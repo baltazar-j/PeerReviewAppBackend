@@ -23,11 +23,19 @@ mongoose
 const postRoutes = require('./routes/postRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 
+//const userRoutes = require('./routes/userRoutes.js'); ROUTE FOR 
+
 app.use('/api/posts', postRoutes);
 app.use('/api', userRoutes); //POST user info to mongo
 
 // Default Route
 app.get('/', (req, res) => res.send('Server is running!'));
+
+app.get('/api/resource', (req, res) => {
+  const { key1, key2 } = req.query;
+  // console.log(Key1: ${key1}, Key2: ${key2});
+  res.send({ message: 'Data received!', key1, key2 });
+});
 
 // Start the server
 app.listen(PORT, () => {
