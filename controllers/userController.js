@@ -1,19 +1,30 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
 
-// Middleware to verify the JWT token
+// // Middleware to verify the JWT token
 const verifyToken = (req, res, next) => {
+    // Extract the token from the authorization header
     const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
 
-    if (!token) return res.status(403).json({ message: 'No token provided' });
+    if (!token) {
+        return res.status(403).json({ message: 'No token provided' });
+    }
 
-    jwt.verify(token, process.env.AUTH0_PUBLIC_KEY, async (err, decoded) => {
-        if (err) return res.status(403).json({ message: 'Invalid token' });
-
-        req.userId = decoded.sub; // Save the user ID from the JWT
+    // Verify the token using the Auth0 public key
+    jwt.verify(token, getKey, {
+        audience: 'https://dev-uo02mxfmeuku4p24.us.auth0.com/api/v2/',
+        issuer: `https://dev-uo02mxfmeuku4p24.us.auth0.com/`
+    }, function(err, decoded) {
+        if (err) {
+            return res.status(403).json({ message: 'Invalid token' });
+        }
+        req.userId = decoded.sub;
         next();
     });
+    
 };
+
 
 // Create or find a user
 const createUser = async (req, res) => {
