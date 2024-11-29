@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Post = require('../models/postModel.js');  // Assuming this is the correct path to your Post model
+const Post = require('../models/postModel.js');
 
 const createPost = async (req, res) => {
   try {
@@ -15,7 +15,6 @@ const createPost = async (req, res) => {
       author,
     });
 
-    // Save the post to the database
     await newPost.save();
 
     return res.status(201).json(newPost);
@@ -26,13 +25,19 @@ const createPost = async (req, res) => {
 };
 
 const getAllPosts = async (req, res) => {
-    try {
-      const posts = await Post.find().sort({ createdAt: -1 }); // Fetch all posts, sorted by newest first
-      res.status(200).json(posts); // Send posts as JSON
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching posts', error: error.message });
-    }
+  try {
+    const posts = await Post.find()
+      .sort({ createdAt: -1 })
+      .populate('author', 'username email')  // Fill author with username and email from the User model
+      .exec();
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ message: 'Error fetching posts', error: error.message });
+  }
 };
+
 
 
 module.exports = {

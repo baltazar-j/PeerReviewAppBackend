@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config( { path: './config/.env' } );
+require('dotenv').config( { path: '.env' } );
 const cookieParser = require('cookie-parser');
 
 
@@ -23,19 +23,13 @@ mongoose
 const postRoutes = require('./routes/postRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 
-//const userRoutes = require('./routes/userRoutes.js'); ROUTE FOR 
 
+//const userRoutes = require('./routes/userRoutes.js'); 
 app.use('/api/posts', postRoutes);
-app.use('/api', userRoutes); //POST user info to mongo
+app.use('/api', userRoutes);
 
 // Default Route
 app.get('/', (req, res) => res.send('Server is running!'));
-
-app.get('/api/resource', (req, res) => {
-  const { key1, key2 } = req.query;
-  // console.log(Key1: ${key1}, Key2: ${key2});
-  res.send({ message: 'Data received!', key1, key2 });
-});
 
 // Start the server
 app.listen(PORT, () => {
