@@ -1,14 +1,18 @@
 {
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "mongodb": "^6.10.0"
+    "express-jwt": "^8.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.8.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
   },
   "name": "server",
-  "type":"module",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
