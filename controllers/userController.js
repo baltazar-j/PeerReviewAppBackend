@@ -1,28 +1,16 @@
 const User = require('../models/userModel');
+const Post = require('../models/postModel');
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 
 // Middleware to verify the JWT token
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
-
-    // if (!token) {
-    //     return res.status(403).json({ message: 'No token provided' });
-    // }
-
-    // // Verify the token using the Auth0 public key
-    // jwt.verify(token, getKey, {
-    //     audience: 'https://dev-uo02mxfmeuku4p24.us.auth0.com/api/v2/',
-    //     issuer: `https://dev-uo02mxfmeuku4p24.us.auth0.com/`
-    // }, function(err, decoded) {
-    //     if (err) {
-    //         return res.status(403).json({ message: 'Invalid token' });
-    //     }
-    //     req.userId = decoded.sub;
-    //     next();
-    // });
+    if (!token) {
+        return res.status(401).json({ message: 'Token not found' });
+    }
+    next();
 };
-
 
 // Create or find a user
 const createUser = async (req, res) => {
@@ -48,7 +36,70 @@ const createUser = async (req, res) => {
     }
 };
 
-// Route to get user data (username and bio)
+// Update user data
+const updateUser = async (req, res) => {
+    const { email, bio } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required to update user information.' });
+    }
+
+    try {
+        const updatedUser = await User.findOneAndUpdate(
+            { email },
+            { bio },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json({ message: 'User updated successfully.', user: updatedUser });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ message: 'Server error.' });
+    }
+};
+
+// Get user by username
+const getUserByUsername = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Get posts by userId (author)
+const getPostsByAuthor = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Find all posts by user
+        const postsByAuthor = await Post.find({ author: userId }).sort({ createdAt: -1 });
+
+        if (!postsByAuthor.length) {
+            return res.status(404).json({ message: 'No posts found for this user' });
+        }
+
+        // Respond with all posts by author
+        res.status(200).json(postsByAuthor);
+    } catch (error) {
+        console.error('Error fetching posts by author:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Get user's username and bio
 const getUserData = async (req, res) => {
     try {
         const user = await User.findOne({ auth0Id: req.userId });
@@ -65,4 +116,11 @@ const getUserData = async (req, res) => {
     }
 };
 
-module.exports = { createUser, getUserData , verifyToken};
+module.exports = {
+    createUser,
+    updateUser,
+    getUserByUsername,
+    getPostsByAuthor,
+    getUserData,
+    verifyToken
+};
