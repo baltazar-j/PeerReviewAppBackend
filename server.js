@@ -27,6 +27,7 @@ const userRoutes = require('./routes/userRoutes.js');
 //const userRoutes = require('./routes/userRoutes.js'); 
 app.use('/api/posts', postRoutes);
 app.use('/api', userRoutes);
+app.use('/api/users', userRoutes);
 
 // Default Route
 app.get('/', (req, res) => res.send('Server is running!'));

@@ -1,35 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const { createUser, getUserData, verifyToken } = require('../controllers/userController');
-const User = require('../models/userModel.js');
+const { createUser, getUserData, verifyToken, updateUser, getUserByUsername, getPostsByAuthor } = require('../controllers/userController');
 
+// Create user route
 router.post('/users', createUser);
 
-router.put('/users', async (req, res) => {
-    const { email, bio } = req.body;
+// Update user route
+router.put('/users', updateUser);
 
-    if (!email) {
-        return res.status(400).json({ message: 'Email is required to update user information.' });
-    }
+// Get user by username
+router.get('/username/:username', getUserByUsername);
 
-    try {
-        const updatedUser = await User.findOneAndUpdate(
-            { email },
-            { bio },
-            { new: true }
-        );
+// Get posts by author (userId)
+router.get('/:userId/author/posts', getPostsByAuthor);
 
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found.' });
-        }
-
-        res.status(200).json({ message: 'User updated successfully.', user: updatedUser });
-    } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({ message: 'Server error.' });
-    }
-});
-
+// Get user data (username and bio)
 router.get('/user', verifyToken, getUserData);
 
 module.exports = router;
