@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 5050; 
 
 const corsOptions = {
-  origin: ['https://client-6lt7isy5c-john-bulbasaurs-projects.vercel.app/login'],
+  origin: ['https://client-wheat-delta.vercel.app', 'http://localhost:5050'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   allowedHeaders: ['Content-Type', 'Authorization']
 };
