@@ -8,8 +8,14 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = process.env.PORT || 5050; 
 
+const corsOptions = {
+  origin: ['https://yourfrontend.com'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middleware
-app.use(cors()); 
+app.use(cors(corsOptions)); 
 app.use(express.json()); 
 app.use(cookieParser());
 
